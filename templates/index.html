@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>FraudGuard AI | Fraud Detection</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background:
+                radial-gradient(circle at top left, #243b80 0%, transparent 35%),
+                radial-gradient(circle at bottom right, #6d28d9 0%, transparent 35%),
+                linear-gradient(135deg, #080b18, #111936);
+            color: white;
+            padding: 30px;
+        }
+
+        /* HEADER */
+        .header {
+            max-width: 1150px;
+            margin: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .logo {
+            width: 52px;
+            height: 52px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #00e5ff, #7c3aed);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 27px;
+            box-shadow: 0 0 30px rgba(0,229,255,0.35);
+        }
+
+        .brand h1 {
+            font-size: 25px;
+            letter-spacing: 0.5px;
+        }
+
+        .brand p {
+            color: #9ca9c9;
+            font-size: 13px;
+            margin-top: 3px;
+        }
+
+        .status {
+            padding: 10px 17px;
+            border-radius: 30px;
+            background: rgba(34,197,94,0.12);
+            border: 1px solid rgba(34,197,94,0.35);
+            color: #4ade80;
+            font-size: 13px;
+        }
+
+        /* MAIN */
+        .container {
+            max-width: 1150px;
+            margin: auto;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .hero h2 {
+            font-size: 38px;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #67e8f9, #c084fc, #f0abfc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            color: #aab5d0;
+            font-size: 15px;
+        }
+
+        /* GRID */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 25px;
+        }
+
+        .card {
+            background: rgba(18, 25, 52, 0.78);
+            border: 1px solid rgba(255,255,255,0.09);
+            border-radius: 24px;
+            padding: 28px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+            backdrop-filter: blur(18px);
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 19px;
+            margin-bottom: 23px;
+        }
+
+        .card-title span {
+            font-size: 23px;
+        }
+
+        /* FORM */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .field.full {
+            grid-column: span 2;
+        }
+
+        label {
+            color: #b8c2dc;
+            font-size: 13px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 13px 14px;
+            border-radius: 12px;
+            border: 1px solid #303b63;
+            background: #0c1228;
+            color: white;
+            outline: none;
+            font-size: 14px;
+            transition: 0.25s;
+        }
+
+        input:focus, select:focus {
+            border-color: #38bdf8;
+            box-shadow: 0 0 0 3px rgba(56,189,248,0.10);
+        }
+
+        input::placeholder {
+            color: #64708f;
+        }
+
+        .hint {
+            color: #667392;
+            font-size: 11px;
+        }
+
+        /* BUTTON */
+        .check-btn {
+            width: 100%;
+            margin-top: 24px;
+            padding: 16px;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+            background: linear-gradient(90deg, #06b6d4, #7c3aed);
+            box-shadow: 0 10px 30px rgba(124,58,237,0.30);
+            transition: 0.25s;
+        }
+
+        .check-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(6,182,212,0.25);
+        }
+
+        .check-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* RESULT */
+        .result-box {
+            min-height: 360px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .waiting {
+            text-align: center;
+            color: #7885a5;
+        }
+
+        .waiting-icon {
+            font-size: 65px;
+            margin-bottom: 15px;
+            opacity: 0.7;
+        }
+
+        .waiting h3 {
+            color: #b9c3dd;
+            margin-bottom: 8px;
+        }
+
+        /* RESULT CARDS */
+        .result {
+            display: none;
+        }
+
+        .decision {
+            text-align: center;
+            padding: 22px;
+            border-radius: 18px;
+            margin-bottom: 20px;
+        }
+
+        .decision-icon {
+            font-size: 45px;
+            margin-bottom: 8px;
+        }
+
+        .decision-title {
+            font-size: 30px;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .decision-subtitle {
+            color: #aeb8d1;
+            margin-top: 5px;
+            font-size: 13px;
+        }
+
+        .block {
+            background: rgba(239,68,68,0.12);
+            border: 1px solid rgba(239,68,68,0.4);
+        }
+
+        .block .decision-title {
+            color: #f87171;
+        }
+
+        .review {
+            background: rgba(245,158,11,0.12);
+            border: 1px solid rgba(245,158,11,0.4);
+        }
+
+        .review .decision-title {
+            color: #fbbf24;
+        }
+
+        .approve {
+            background: rgba(34,197,94,0.12);
+            border: 1px solid rgba(34,197,94,0.4);
+        }
+
+        .approve .decision-title {
+            color: #4ade80;
+        }
+
+        /* METRICS */
+        .metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .metric {
+            padding: 18px;
+            border-radius: 16px;
+            background: #0c1228;
+            border: 1px solid #252f52;
+        }
+
+        .metric-label {
+            color: #7e8bab;
+            font-size: 12px;
+            margin-bottom: 7px;
+        }
+
+        .metric-value {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .probability {
+            color: #67e8f9;
+        }
+
+        .risk {
+            color: #c084fc;
+        }
+
+        .database {
+            margin-top: 15px;
+            padding: 13px;
+            border-radius: 12px;
+            text-align: center;
+            background: rgba(34,197,94,0.08);
+            color: #4ade80;
+            border: 1px solid rgba(34,197,94,0.2);
+            font-size: 13px;
+        }
+
+        /* LOADING */
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 15px;
+            color: #67e8f9;
+            font-size: 13px;
+        }
+
+        /* FOOTER */
+        footer {
+            max-width: 1150px;
+            margin: 25px auto 0;
+            text-align: center;
+            color: #64708f;
+            font-size: 12px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 850px) {
+            body {
+                padding: 18px;
+            }
+
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+
+            .hero h2 {
+                font-size: 30px;
+            }
+
+            .header {
+                align-items: flex-start;
+            }
+
+            .status {
+                display: none;
+            }
+        }
+
+        @media (max-width: 550px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .field.full {
+                grid-column: span 1;
+            }
+
+            .card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <div class="header">
+
+        <div class="brand">
+            <div class="logo">🛡️</div>
+
+            <div>
+                <h1>FraudGuard AI</h1>
+                <p>Real-Time Transaction Intelligence</p>
+            </div>
+        </div>
+
+        <div class="status">
+            ● ML System Online
+        </div>
+
+    </div>
+
+
+    <div class="container">
+
+        <!-- HERO -->
+        <div class="hero">
+            <h2>AI-Powered Fraud Detection</h2>
+
+            <p>
+                Analyze transaction risk using machine learning
+                and intelligent decision scoring.
+            </p>
+        </div>
+
+
+        <!-- DASHBOARD -->
+        <div class="dashboard">
+
+            <!-- INPUT CARD -->
+            <div class="card">
+
+                <div class="card-title">
+                    <span>💳</span>
+                    Transaction Details
+                </div>
+
+                <form id="fraudForm">
+
+                    <div class="form-grid">
+
+                        <div class="field">
+                            <label>Transaction Amount</label>
+
+                            <input
+                                type="number"
+                                id="amount"
+                                step="0.01"
+                                min="0.01"
+                                placeholder="e.g. 450.50"
+                                required
+                            >
+                        </div>
+
+
+                        <div class="field">
+                            <label>Transaction Hour</label>
+
+                            <input
+                                type="number"
+                                id="transaction_hour"
+                                min="0"
+                                max="23"
+                                placeholder="0 - 23"
+                                required
+                            >
+
+                            <span class="hint">
+                                0 = midnight, 23 = 11 PM
+                            </span>
+                        </div>
+
+
+                        <div class="field">
+                            <label>Transactions in Last Hour</label>
+
+                            <input
+                                type="number"
+                                id="transactions_last_hour"
+                                min="0"
+                                placeholder="e.g. 8"
+                                required
+                            >
+                        </div>
+
+
+                        <div class="field">
+                            <label>Account Age (Days)</label>
+
+                            <input
+                                type="number"
+                                id="account_age_days"
+                                min="0"
+                                placeholder="e.g. 1058"
+                                required
+                            >
+                        </div>
+
+
+                        <div class="field">
+                            <label>Previous Failed Transactions</label>
+
+                            <input
+                                type="number"
+                                id="previous_failed_transactions"
+                                min="0"
+                                placeholder="e.g. 3"
+                                required
+                            >
+                        </div>
+
+
+                        <div class="field">
+                            <label>Device Changed?</label>
+
+                            <select id="device_changed">
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                        </div>
+
+
+                        <div class="field">
+                            <label>Location Changed?</label>
+
+                            <select id="location_changed">
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                        </div>
+
+                    </div>
+
+
+                    <button type="submit" class="check-btn">
+                        🔍 CHECK TRANSACTION
+                    </button>
+
+                    <div class="loading" id="loading">
+                        🤖 AI is analyzing the transaction...
+                    </div>
+
+                </form>
+
+            </div>
+
+
+            <!-- RESULT CARD -->
+            <div class="card result-box">
+
+                <!-- WAITING -->
+                <div class="waiting" id="waiting">
+
+                    <div class="waiting-icon">
+                        🔐
+                    </div>
+
+                    <h3>Waiting for Transaction</h3>
+
+                    <p>
+                        Enter transaction details and click
+                        <b>Check Transaction</b>.
+                    </p>
+
+                </div>
+
+
+                <!-- RESULT -->
+                <div class="result" id="result">
+
+                    <div class="decision" id="decisionBox">
+
+                        <div class="decision-icon" id="decisionIcon">
+                            🚨
+                        </div>
+
+                        <div class="decision-title" id="decision">
+                            BLOCK
+                        </div>
+
+                        <div class="decision-subtitle">
+                            AI Risk Decision
+                        </div>
+
+                    </div>
+
+
+                    <div class="metrics">
+
+                        <div class="metric">
+
+                            <div class="metric-label">
+                                FRAUD PROBABILITY
+                            </div>
+
+                            <div
+                                class="metric-value probability"
+                                id="probability"
+                            >
+                                0%
+                            </div>
+
+                        </div>
+
+
+                        <div class="metric">
+
+                            <div class="metric-label">
+                                RISK SCORE
+                            </div>
+
+                            <div
+                                class="metric-value risk"
+                                id="risk"
+                            >
+                                0
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="database">
+                        ✓ Prediction successfully saved to SQL Server
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <footer>
+        FraudGuard AI • Machine Learning Fraud Detection System • FastAPI + SQL Server
+    </footer>
+
+
+    <script>
+
+        const form = document.getElementById("fraudForm");
+
+        const waiting = document.getElementById("waiting");
+
+        const result = document.getElementById("result");
+
+        const loading = document.getElementById("loading");
+
+        const decisionBox = document.getElementById("decisionBox");
+
+        const decisionIcon = document.getElementById("decisionIcon");
+
+        const decision = document.getElementById("decision");
+
+        const probability = document.getElementById("probability");
+
+        const risk = document.getElementById("risk");
+
+
+        form.addEventListener("submit", async function(event) {
+
+            event.preventDefault();
+
+            loading.style.display = "block";
+
+            result.style.display = "none";
+
+
+            const transaction = {
+
+                amount:
+                    parseFloat(
+                        document.getElementById("amount").value
+                    ),
+
+                transaction_hour:
+                    parseInt(
+                        document.getElementById("transaction_hour").value
+                    ),
+
+                transactions_last_hour:
+                    parseInt(
+                        document.getElementById("transactions_last_hour").value
+                    ),
+
+                account_age_days:
+                    parseInt(
+                        document.getElementById("account_age_days").value
+                    ),
+
+                previous_failed_transactions:
+                    parseInt(
+                        document.getElementById(
+                            "previous_failed_transactions"
+                        ).value
+                    ),
+
+                device_changed:
+                    parseInt(
+                        document.getElementById("device_changed").value
+                    ),
+
+                location_changed:
+                    parseInt(
+                        document.getElementById("location_changed").value
+                    )
+            };
+
+
+            try {
+
+                const response = await fetch(
+                    "/predict",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify(transaction)
+                    }
+                );
+
+
+                const data = await response.json();
+
+
+                if (!response.ok) {
+                    throw new Error(
+                        data.detail || "Prediction failed"
+                    );
+                }
+
+
+                waiting.style.display = "none";
+
+                result.style.display = "block";
+
+
+                const fraudPercent =
+                    (data.fraud_probability * 100).toFixed(2);
+
+
+                probability.textContent =
+                    fraudPercent + "%";
+
+
+                risk.textContent =
+                    data.risk_score;
+
+
+                decision.textContent =
+                    data.decision;
+
+
+                /* RESET */
+                decisionBox.className = "decision";
+
+
+                /* DECISION COLORS */
+                if (data.decision === "BLOCK") {
+
+                    decisionBox.classList.add("block");
+
+                    decisionIcon.textContent = "🚨";
+
+                }
+
+                else if (data.decision === "REVIEW") {
+
+                    decisionBox.classList.add("review");
+
+                    decisionIcon.textContent = "⚠️";
+
+                }
+
+                else {
+
+                    decisionBox.classList.add("approve");
+
+                    decisionIcon.textContent = "✅";
+
+                }
+
+            }
+
+            catch (error) {
+
+                alert(
+                    "Error: " + error.message
+                );
+
+            }
+
+            finally {
+
+                loading.style.display = "none";
+
+            }
+
+        });
+
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,11 @@
+venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.env
+
+# Machine learning model
+models/*.pkl
+
+# Generated/local dataset
+data/*.csv
