@@ -9,3 +9,5 @@ models/*.pkl
 
 # Generated/local dataset
 data/*.csv
+
+.venv/
