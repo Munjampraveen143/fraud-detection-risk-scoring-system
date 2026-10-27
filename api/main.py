@@ -1,3 +1,4 @@
+
 import sys
 from pathlib import Path
 
@@ -110,7 +111,6 @@ def home():
 @app.post("/predict")
 def predict(transaction: Transaction):
 
-    # Prepare transaction features
     features = pd.DataFrame([{
         "amount": transaction.amount,
         "transaction_hour": transaction.transaction_hour,
@@ -136,7 +136,10 @@ def predict(transaction: Transaction):
     except Exception as exc:
         raise HTTPException(
             status_code=500,
-            detail="Fraud prediction failed. Check the model and its expected features."
+            detail=(
+                "Fraud prediction failed. Check the model "
+                "and its expected features."
+            )
         ) from exc
 
     # Calculate risk score
@@ -201,7 +204,6 @@ def predict(transaction: Transaction):
         database_status = "saved"
 
     except SQLAlchemyError as exc:
-        # Do not expose database credentials or internal error details.
         print(f"Database save failed: {type(exc).__name__}")
 
         raise HTTPException(
