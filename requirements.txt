@@ -12,3 +12,7 @@ uvicorn
 pydantic
 sqlalchemy
 streamlit
+
+pyodbc
+
+requests
